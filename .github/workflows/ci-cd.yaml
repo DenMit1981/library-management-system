@@ -39,15 +39,15 @@ jobs:
           version: 'latest'
 
       - name: Decode kubeconfig and configure kubectl
-        shell: pwsh
+        shell: powershell
         run: |
           $decoded = [System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String("${{ secrets.KUBE_CONFIG_DATA }}"))
           $decoded | Out-File -FilePath kubeconfig -Encoding utf8
-          $Env:KUBECONFIG = "$PWD/kubeconfig"
+          $Env:KUBECONFIG = "$PWD\kubeconfig"
           kubectl config get-contexts
 
       - name: Deploy to Kubernetes
-        shell: pwsh
+        shell: powershell
         run: |
-          $Env:KUBECONFIG = "$PWD/kubeconfig"
-          kubectl apply -f k8s/libraryapp.yaml --validate=false
+          $Env:KUBECONFIG = "$PWD\kubeconfig"
+          kubectl apply -f k8s\libraryapp.yaml --validate=false
