@@ -98,6 +98,8 @@ git push origin main
 kubectl get pods
 - Check the services and get the NodePort:
 kubectl get svc
+- Check deployment:
+kubectl get deployments
 - Open your browser or Postman and go to:
 http://localhost:<NodePort>/library-management-system/api/books
 Replace <NodePort> with the actual port listed under your service (e.g., 32079).
