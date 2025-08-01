@@ -1,0 +1,203 @@
+openapi: 3.0.1
+info:
+  title: Library API
+  version: 1.0.0
+  description: Book management API
+paths:
+  /api/v1/users/register:
+    post:
+      tags:
+        - User controller
+      summary: Registration a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserRegisterRequestDto'
+      responses:
+        '201':
+          description: Successfully registered
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserRegisterResponseDto'
+  /api/v1/books/register:
+    post:
+      tags:
+        - Book controller
+      summary: Register a new book to the library
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BookRegisterRequestDto'
+      responses:
+        '201':
+          description: Book registered
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BookResponseDto'
+
+  /api/v1/books:
+    get:
+      tags:
+        - Book controller
+      summary: Get a list of all books in the library with sort and pagination
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: integer
+            default: 0
+        - in: query
+          name: size
+          schema:
+            type: integer
+            default: 10
+        - in: query
+          name: sortBy
+          schema:
+            type: string
+            default: title
+        - in: query
+          name: sortDir
+          schema:
+            type: string
+            default: asc
+      responses:
+        '200':
+          description: List of books
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/BookResponseDto'
+
+  /api/v1/books/{bookId}/borrow:
+    post:
+      tags:
+        - Book controller
+      summary: Borrow a book for a user
+      parameters:
+        - in: path
+          name: bookId
+          required: true
+          schema:
+            type: integer
+        - in: query
+          name: borrowerId
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Book borrowed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BookResponseDto'
+
+  /api/v1/books/{bookId}/return:
+    post:
+      tags:
+        - Book controller
+      summary: Return a borrowed book
+      parameters:
+        - in: path
+          name: bookId
+          required: true
+          schema:
+            type: integer
+        - in: query
+          name: borrowerId
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Book returned
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BookResponseDto'
+
+components:
+  schemas:
+    BookRegisterRequestDto:
+      type: object
+      required:
+        - isbn
+        - title
+        - author
+      properties:
+        isbn:
+          type: string
+          example: "978-3-16-148410-0"
+        title:
+          type: string
+          example: "Effective Java"
+        author:
+          type: string
+          example: "Joshua Bloch"
+
+    BookResponseDto:
+      type: object
+      properties:
+        isbn:
+          type: string
+        title:
+          type: string
+        author:
+          type: string
+
+    UserRegisterRequestDto:
+      type: object
+      required:
+        - name
+        - email
+      properties:
+        name:
+          type: string
+          example: "John Doe"
+        email:
+          type: string
+          example: "john@example.com"
+
+    UserLoginRequestDto:
+      type: object
+      required:
+        - login
+      properties:
+        login:
+          type: string
+          example: "john@example.com"
+
+    UserRegisterResponseDto:
+      allOf:
+        - $ref: '#/components/schemas/UserResponseDto'
+        - type: object
+          properties:
+            message:
+              type: string
+              example: "Registration successful"
+
+    UserLoginResponseDto:
+      allOf:
+        - $ref: '#/components/schemas/UserResponseDto'
+        - type: object
+          properties:
+            token:
+              type: string
+              example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+
+    UserResponseDto:
+      type: object
+      properties:
+        name:
+          type: string
+        email:
+          type: string

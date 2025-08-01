@@ -1,0 +1,37 @@
+version: "3.9"
+
+services:
+  app:
+    container_name: library-management-system
+    build: .
+    ports:
+      - "8081:8081"
+    depends_on:
+      - librarydb
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://librarydb:5432/librarydb
+      - SPRING_DATASOURCE_USERNAME=test
+      - SPRING_DATASOURCE_PASSWORD=test
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=none
+      - SPRING_LIQUIBASE_ENABLED=true
+      - SPRING_LIQUIBASE_DROP-FIRST=true
+      - SPRING_LIQUIBASE_CHANGE-LOG=classpath:db/changelog/db-changelog-master.yaml
+      - SPRING_LIQUIBASE_CONTEXTS=migrated
+      - SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT=org.hibernate.dialect.PostgreSQLDialect
+      - SPRING_JPA_PROPERTIES_HIBERNATE_DEFAULT_SCHEMA=public
+      - SPRINGDOC_API-DOCS_PATH=/library-management-system/v3/api-docs
+      - SPRINGDOC_SWAGGER-UI_PATH=/library-management-system/swagger-ui.html
+      - SERVER_PORT=8081
+
+  librarydb:
+    image: debezium/postgres:15-alpine
+    container_name: librarydb
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_PASSWORD=test
+      - POSTGRES_USER=test
+      - POSTGRES_DB=librarydb
+
+
+

@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: libraryapp
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: libraryapp
+  template:
+    metadata:
+      labels:
+        app: libraryapp
+    spec:
+      containers:
+        - name: libraryapp
+          image: library-management-system:latest
+          imagePullPolicy: Never  # <--- Добавлено!
+          ports:
+            - containerPort: 8081
+          env:
+            - name: SPRING_DATASOURCE_URL
+              value: jdbc:postgresql://librarydb:5432/librarydb
+            - name: SPRING_DATASOURCE_USERNAME
+              value: test
+            - name: SPRING_DATASOURCE_PASSWORD
+              value: test
+            - name: SERVER_PORT
+              value: "8081"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: libraryapp-service
+spec:
+  selector:
+    app: libraryapp
+  ports:
+    - protocol: TCP
+      port: 8081
+      targetPort: 8081
+  type: NodePort
